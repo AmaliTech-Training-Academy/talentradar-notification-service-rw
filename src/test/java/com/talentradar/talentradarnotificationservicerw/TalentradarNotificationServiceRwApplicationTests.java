@@ -1,0 +1,13 @@
+package com.talentradar.talentradarnotificationservicerw;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class TalentradarNotificationServiceRwApplicationTests {
+
+    @Test
+    void contextLoads() {
+    }
+
+}
