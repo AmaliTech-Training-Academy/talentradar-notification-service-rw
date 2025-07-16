@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: talentradar-notification-service-rw
+  config:
+    import: 'configserver:'
+  cloud:
+    config:
+      uri: ${SPRING_CLOUD_CONFIG_URI}
