@@ -9,5 +9,4 @@ public class TalentradarNotificationServiceRwApplication {
     public static void main(String[] args) {
         SpringApplication.run(TalentradarNotificationServiceRwApplication.class, args);
     }
-
 }
