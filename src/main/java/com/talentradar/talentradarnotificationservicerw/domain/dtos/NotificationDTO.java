@@ -10,8 +10,7 @@ import java.util.UUID;
 
 @Builder
 public record NotificationDTO(
-        UUID id,
-        NotificationType type,
+        String id,
         NotificationCategory category,
         NotificationEventType eventType,
         String title,

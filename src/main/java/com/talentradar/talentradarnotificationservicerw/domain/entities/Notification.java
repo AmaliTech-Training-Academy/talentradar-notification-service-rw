@@ -27,9 +27,10 @@ public class Notification {
     private String content;
     private NotificationType type;
     private NotificationCategory category;
-    private UUID recipientId;
+    private String recipientId;
     private NotificationEventType eventType;
     private int retryCount;
+    private boolean dismissed;
 
     @Column(nullable = true)
     private LocalDateTime readAt;
