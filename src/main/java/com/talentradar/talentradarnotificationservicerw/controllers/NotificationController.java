@@ -4,7 +4,7 @@ import com.talentradar.talentradarnotificationservicerw.domain.dtos.*;
 import com.talentradar.talentradarnotificationservicerw.domain.entities.Notification;
 import com.talentradar.talentradarnotificationservicerw.domain.enums.NotificationCategory;
 import com.talentradar.talentradarnotificationservicerw.domain.mappers.EntityToDTO;
-import com.talentradar.talentradarnotificationservicerw.services.NotificationService;
+import com.talentradar.talentradarnotificationservicerw.services.NotificationServices;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -20,7 +20,7 @@ import java.util.Optional;
 @RequestMapping("/notifications")
 @RequiredArgsConstructor
 public class NotificationController {
-    private final NotificationService notificationService;
+    private final NotificationServices notificationService;
 
     @GetMapping
     public ResponseEntity<PaginatedResponseDTO> getNotifications(

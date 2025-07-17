@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.Optional;
 
-public interface NotificationService {
+public interface NotificationServices {
     Page<Notification> findNotifications(String recipient, Optional<NotificationCategory> category, Optional<String> status, Pageable pageable);
 
     Optional<Notification> getNotification(String notificationId);

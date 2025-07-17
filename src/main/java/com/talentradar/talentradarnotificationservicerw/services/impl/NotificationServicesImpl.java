@@ -3,7 +3,7 @@ package com.talentradar.talentradarnotificationservicerw.services.impl;
 import com.talentradar.talentradarnotificationservicerw.domain.entities.Notification;
 import com.talentradar.talentradarnotificationservicerw.domain.enums.NotificationCategory;
 import com.talentradar.talentradarnotificationservicerw.repositories.NotificationRepository;
-import com.talentradar.talentradarnotificationservicerw.services.NotificationService;
+import com.talentradar.talentradarnotificationservicerw.services.NotificationServices;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,7 +21,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class NotificationServiceImpl implements NotificationService {
+public class NotificationServicesImpl implements NotificationServices {
     private final NotificationRepository notificationRepository;
     private final MongoTemplate mongoTemplate;
 
