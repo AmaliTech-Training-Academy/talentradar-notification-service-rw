@@ -1,7 +1,10 @@
 package com.talentradar.talentradarnotificationservicerw.services.impl;
 
+import com.talentradar.talentradarnotificationservicerw.domain.dtos.SimpleResponseDTO;
+import com.talentradar.talentradarnotificationservicerw.domain.dtos.SingleNotificationResponseDTO;
 import com.talentradar.talentradarnotificationservicerw.domain.entities.Notification;
 import com.talentradar.talentradarnotificationservicerw.domain.enums.NotificationCategory;
+import com.talentradar.talentradarnotificationservicerw.domain.mappers.EntityToDTO;
 import com.talentradar.talentradarnotificationservicerw.repositories.NotificationRepository;
 import com.talentradar.talentradarnotificationservicerw.services.NotificationServices;
 import jakarta.persistence.EntityNotFoundException;
@@ -47,8 +50,14 @@ public class NotificationServicesImpl implements NotificationServices {
     }
 
     @Override
-    public Optional<Notification> getNotification(String notificationId) {
-        return notificationRepository.findById(notificationId);
+    public Optional<SingleNotificationResponseDTO> getNotification(String notificationId, String userId) {
+        Optional<Notification> foundNotification = notificationRepository.findByIdAndRecipientId(notificationId,userId);
+        return foundNotification.map(notification -> SingleNotificationResponseDTO.builder()
+                .success(true)
+                .message("Notification retrieved")
+                .data(EntityToDTO.notificationEntityToDTO(notification))
+                .errors(null)
+                .build());
     }
 
     @Override
@@ -57,16 +66,22 @@ public class NotificationServicesImpl implements NotificationServices {
     }
 
     @Override
-    public void readNotification(String notificationId) {
-        Optional<Notification> optionalNotification = getNotification(notificationId);
+    public SimpleResponseDTO readNotification(String notificationId) {
+        Optional<Notification> foundNotification = notificationRepository.findById(notificationId);
 
-        if (optionalNotification.isEmpty()) {
+        if (foundNotification.isEmpty()) {
             throw new EntityNotFoundException("Notification entity not found");
         }
 
-        Notification notification = optionalNotification.get();
+        Notification notification = foundNotification.get();
         notification.setReadAt(LocalDateTime.now());
         notificationRepository.save(notification);
+        return SimpleResponseDTO.builder()
+                .success(true)
+                .message("Notification marked as read")
+                .data(null)
+                .errors(null)
+                .build();
     }
 
     @Override
@@ -75,8 +90,8 @@ public class NotificationServicesImpl implements NotificationServices {
     }
 
     @Override
-    public void dismissNotification(String notificationId) {
-        Optional<Notification> optionalNotification = getNotification(notificationId);
+    public SimpleResponseDTO dismissNotification(String notificationId) {
+        Optional<Notification> optionalNotification = notificationRepository.findById(notificationId);
 
         if (optionalNotification.isEmpty()) {
             throw new EntityNotFoundException("Notification entity not found");
@@ -85,5 +100,11 @@ public class NotificationServicesImpl implements NotificationServices {
         Notification notification = optionalNotification.get();
         notification.setDismissed(true);
         notificationRepository.save(notification);
+
+        return SimpleResponseDTO.builder()
+                .success(true)
+                .message("Notification dismissed")
+                .errors(null)
+                .build();
     }
 }

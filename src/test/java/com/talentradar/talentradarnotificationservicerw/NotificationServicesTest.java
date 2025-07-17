@@ -1,5 +1,6 @@
 package com.talentradar.talentradarnotificationservicerw;
 
+import com.talentradar.talentradarnotificationservicerw.domain.dtos.SingleNotificationResponseDTO;
 import com.talentradar.talentradarnotificationservicerw.domain.entities.Notification;
 import com.talentradar.talentradarnotificationservicerw.domain.enums.NotificationCategory;
 import com.talentradar.talentradarnotificationservicerw.repositories.NotificationRepository;
@@ -87,10 +88,11 @@ public class NotificationServicesTest {
     @Test
     void getNotification_existingId_shouldReturnNotification() {
         String id = "notif123";
+        String recipient = "user2";
         Notification notification = new Notification();
-        when(notificationRepository.findById(id)).thenReturn(Optional.of(notification));
+        when(notificationRepository.findByIdAndRecipientId(id,recipient)).thenReturn(Optional.of(notification));
 
-        Optional<Notification> result = notificationServices.getNotification(id);
+        Optional<SingleNotificationResponseDTO> result = notificationServices.getNotification(id, recipient);
         assertTrue(result.isPresent());
     }
 

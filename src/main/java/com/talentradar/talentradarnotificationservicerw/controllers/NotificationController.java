@@ -23,12 +23,7 @@ public class NotificationController {
     private final NotificationServices notificationService;
 
     @GetMapping
-    public ResponseEntity<PaginatedResponseDTO> getNotifications(
-            @RequestHeader("X-User-Id") String userId,
-            @RequestParam(required = false) NotificationCategory category,
-            @RequestParam(required = false) String status,
-            Pageable pageable
-    ) {
+    public ResponseEntity<PaginatedResponseDTO> getNotifications(@RequestHeader("X-User-Id") String userId, @RequestParam(required = false) NotificationCategory category, @RequestParam(required = false) String status, Pageable pageable) {
         Page<Notification> notificationsPage = notificationService.findNotifications(userId, Optional.of(category), Optional.of(status), pageable);
         return getPaginatedResponseDTOResponseEntity(notificationsPage);
     }
@@ -37,58 +32,36 @@ public class NotificationController {
     public ResponseEntity<SingleNotificationResponseDTO> getSingleNotification(
             @RequestHeader("X-User-Id") String userId,
             @PathVariable String id) {
-        Optional<Notification> foundNotification = notificationService.getNotification(id);
+        Optional<SingleNotificationResponseDTO> foundNotification = notificationService.getNotification(id, userId);
         if (foundNotification.isEmpty()) {
             throw new EntityNotFoundException("Notification entity not found");
         }
 
-        Notification notification = foundNotification.get();
-        return new ResponseEntity<>(
-                SingleNotificationResponseDTO.builder()
-                        .success(true)
-                        .message("Notification retrieved")
-                        .data(EntityToDTO.notificationEntityToDTO(notification))
-                        .errors(null)
-                        .build(),
-                HttpStatus.OK
-        );
+        SingleNotificationResponseDTO notificationResponse = foundNotification.get();
+        return new ResponseEntity<>(notificationResponse, HttpStatus.OK);
     }
 
     @GetMapping("/search")
     public ResponseEntity<PaginatedResponseDTO> searchNotification(
             @RequestHeader("X-User-Id") String userId,
-            @RequestParam String query,
-            Pageable pageable
-    ) {
+            @RequestParam String query, Pageable pageable) {
         Page<Notification> notificationsPage = notificationService.searchNotification(query, userId, pageable);
         return getPaginatedResponseDTOResponseEntity(notificationsPage);
     }
 
     @PatchMapping("/{id}/read")
     public ResponseEntity<SimpleResponseDTO> readNotification(@PathVariable String id) {
-        notificationService.readNotification(id);
+        SimpleResponseDTO simpleResponse = notificationService.readNotification(id);
 
-        return new ResponseEntity<>(
-                SimpleResponseDTO.builder()
-                        .success(true)
-                        .message("Notification marked as read")
-                        .errors(null)
-                        .build(),
-                HttpStatus.OK
-        );
+        return new ResponseEntity<>(simpleResponse, HttpStatus.OK);
     }
 
     @PatchMapping("/{id}/dismiss")
     public ResponseEntity<SimpleResponseDTO> dismissNotification(@PathVariable String id) {
-        notificationService.dismissNotification(id);
+        SimpleResponseDTO notificationResponse = notificationService.dismissNotification(id);
         return new ResponseEntity<>(
-                SimpleResponseDTO.builder()
-                        .success(true)
-                        .message("Notification dismissed")
-                        .errors(null)
-                        .build(),
-                HttpStatus.OK
-        );
+                notificationResponse,
+                HttpStatus.OK);
     }
 
     private ResponseEntity<PaginatedResponseDTO> getPaginatedResponseDTOResponseEntity(Page<Notification> notificationsPage) {
@@ -108,10 +81,7 @@ public class NotificationController {
                                                 .totalPages(notificationsPage.getTotalPages())
                                                 .hasNext(notificationsPage.hasNext())
                                                 .hasPrevious(notificationsPage.hasPrevious())
-                                                .build())
-                                .build()
-                )
-                .errors(null)
+                                                .build()).build()).errors(null)
                 .build();
 
         return new ResponseEntity<>(response, HttpStatus.OK);
