@@ -9,6 +9,7 @@ public record FeedBackServiceEvent(
         String title,
         String content,
         String recipientId,
+        String recipientEmail,
         NotificationType type,
         NotificationCategory category
 
