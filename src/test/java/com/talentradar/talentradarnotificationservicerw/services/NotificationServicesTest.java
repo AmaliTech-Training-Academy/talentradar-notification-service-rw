@@ -1,4 +1,4 @@
-package com.talentradar.talentradarnotificationservicerw;
+package com.talentradar.talentradarnotificationservicerw.services;
 
 import com.talentradar.talentradarnotificationservicerw.domain.dtos.SingleNotificationResponseDTO;
 import com.talentradar.talentradarnotificationservicerw.domain.entities.Notification;
