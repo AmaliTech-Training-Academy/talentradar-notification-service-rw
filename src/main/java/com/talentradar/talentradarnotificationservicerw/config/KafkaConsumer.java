@@ -3,6 +3,7 @@ package com.talentradar.talentradarnotificationservicerw.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.talentradar.talentradarnotificationservicerw.domain.entities.Notification;
 import com.talentradar.talentradarnotificationservicerw.domain.enums.NotificationEventType;
+import com.talentradar.talentradarnotificationservicerw.domain.events.EventLog;
 import com.talentradar.talentradarnotificationservicerw.domain.events.FeedBackServiceEvent;
 import com.talentradar.talentradarnotificationservicerw.services.NotificationServices;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,13 @@ public class KafkaConsumer {
 
             Notification savedNotification = notificationServices.saveNotification(notification);
             sendWebSocketPush(savedNotification, event);
+            log.info(
+                    EventLog.builder()
+                            .trigger("Event triggered by a new assessment submitted")
+                            .event(event)
+                            .build()
+                            .toString()
+            );
         } catch (Exception e) {
             log.error(e.getMessage());
         }
@@ -54,6 +62,14 @@ public class KafkaConsumer {
 
             Notification savedNotification = notificationServices.saveNotification(notification);
             sendWebSocketPush(savedNotification, event);
+
+            log.info(
+                    EventLog.builder()
+                            .trigger("Event triggered by a new feedback submitted")
+                            .event(event)
+                            .build()
+                            .toString()
+            );
         } catch (Exception e) {
             log.error(e.getMessage());
         }
