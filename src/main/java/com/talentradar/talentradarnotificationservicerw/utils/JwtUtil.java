@@ -19,7 +19,7 @@ public class JwtUtil {
 
     public JwtUtil() {
         this.secret = System.getenv("JWT_SECRET");
-        this.jwtExpirationInSeconds = Integer.parseInt(System.getenv("JWT_EXPIRATION"));
+        this.jwtExpirationInSeconds = Integer.parseInt(System.getenv("JWT_EXPIRATION_MS"));
     }
 
     private SecretKey getSigningKey() {
