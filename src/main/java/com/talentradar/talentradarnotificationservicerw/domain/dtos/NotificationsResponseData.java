@@ -6,7 +6,7 @@ import java.util.List;
 
 @Builder
 public record NotificationsResponseData(
-        List<NotificationDTO> notifications,
+        List<NotificationDTO> items,
         PaginationSchema pagination
 ) {
 }

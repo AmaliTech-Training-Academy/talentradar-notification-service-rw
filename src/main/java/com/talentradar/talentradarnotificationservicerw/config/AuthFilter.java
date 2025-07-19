@@ -33,22 +33,22 @@ public class AuthFilter extends OncePerRequestFilter {
                     break;
                 }
             }
-
-            if (token != null && jwtUtil.isTokenValid(token)) {
-                String userId = request.getHeader("X-User-Id");
-                String role = request.getHeader("X-User-Id");
-
-                UsernamePasswordAuthenticationToken authenticationToken =
-                        new UsernamePasswordAuthenticationToken(
-                                userId,
-                                null,
-                                List.of(new SimpleGrantedAuthority("ROLE_" + role))
-                        );
-
-                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-            }
-
-            filterChain.doFilter(request, response);
         }
+
+        if (token != null && jwtUtil.isTokenValid(token)) {
+            String userId = request.getHeader("X-User-Id");
+            String role = request.getHeader("X-User-Role");
+
+            UsernamePasswordAuthenticationToken authenticationToken =
+                    new UsernamePasswordAuthenticationToken(
+                            userId,
+                            null,
+                            List.of(new SimpleGrantedAuthority("ROLE_" + role))
+                    );
+
+            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+        }
+
+        filterChain.doFilter(request, response);
     }
 }

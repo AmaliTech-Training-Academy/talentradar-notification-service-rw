@@ -72,7 +72,7 @@ public class NotificationController {
                 .message("Notifications retrieved successfully")
                 .data(
                         NotificationsResponseData.builder()
-                                .notifications(notificationList)
+                                .items(notificationList)
                                 .pagination(
                                         PaginationSchema.builder()
                                                 .page(notificationsPage.getNumber())
