@@ -3,7 +3,7 @@ name: Deploy Application to AWS ECR
 
 on:
   push:
-    branches: ["development", "staging", "production"]
+    branches: ["staging", "production"]
   workflow_dispatch:
     inputs:
       environment:
