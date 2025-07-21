@@ -1,54 +1,64 @@
 package com.talentradar.talentradarnotificationservicerw.config;
 
-import com.talentradar.talentradarnotificationservicerw.utils.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class AuthFilter extends OncePerRequestFilter {
-    private final JwtUtil jwtUtil;
+    private static final String HEADER_USER_ID = "X-User-Id";
+    private static final String HEADER_USER_EMAIL = "X-User-Email";
+    private static final String HEADER_USER_FULL_NAME = "X-User-FullName";
+    private static final String HEADER_USER_ROLE = "X-User-Role";
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String token = null;
-        if (request.getCookies() != null) {
-            for (Cookie cookie : request.getCookies()) {
-                if ("token".equals(cookie.getName())) {
-                    token = cookie.getValue();
-                    break;
-                }
+    protected void doFilterInternal(@NonNull HttpServletRequest request,
+                                    @NonNull HttpServletResponse response,
+                                    @NonNull FilterChain filterChain) throws ServletException, IOException {
+
+        // Extract user information from headers
+        String userId = request.getHeader(HEADER_USER_ID);
+        String email = request.getHeader(HEADER_USER_EMAIL);
+        String fullName = request.getHeader(HEADER_USER_FULL_NAME);
+        String role = request.getHeader(HEADER_USER_ROLE);
+
+        // If user information exists in headers, create authentication
+        if (userId != null && email != null && role != null) {
+            UserPrincipal userPrincipal = new UserPrincipal(userId, email, fullName, role);
+
+            // Create authorities from role
+            List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+            if (role != null && !role.isEmpty()) {
+                // Ensure role has ROLE_ prefix
+                String roleName = role.startsWith("ROLE_") ? role : "ROLE_" + role;
+                authorities.add(new SimpleGrantedAuthority(roleName));
             }
+
+            // Create authentication object
+            Authentication authentication = new UsernamePasswordAuthenticationToken(
+                    userPrincipal, null, authorities);
+
+            // Set authentication in security context
+            SecurityContextHolder.getContext().setAuthentication(authentication);
         }
 
-        if (token != null && jwtUtil.isTokenValid(token)) {
-            String userId = request.getHeader("X-User-Id");
-            String role = request.getHeader("X-User-Role");
-
-            UsernamePasswordAuthenticationToken authenticationToken =
-                    new UsernamePasswordAuthenticationToken(
-                            userId,
-                            null,
-                            List.of(new SimpleGrantedAuthority("ROLE_" + role))
-                    );
-
-            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-        }
-
+        // Continue with the filter chain
         filterChain.doFilter(request, response);
     }
 }

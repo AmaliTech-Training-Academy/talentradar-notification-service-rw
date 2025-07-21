@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -21,6 +22,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -29,11 +31,19 @@ public class NotificationServicesImpl implements NotificationServices {
     private final MongoTemplate mongoTemplate;
 
     @Override
-    public Page<Notification> findNotifications(String recipient, Optional<NotificationCategory> category, Optional<String> status, Pageable pageable) {
+    public Page<Notification> findNotifications(
+            String recipient,
+            Optional<NotificationCategory> category,
+            Optional<String> status,
+            Pageable pageable
+    ) {
         List<Criteria> criteriaList = new ArrayList<>();
-        criteriaList.add(Criteria.where("recipientId").is(recipient));
-        category.ifPresent(cat -> criteriaList.add(Criteria.where("category").is(cat)));
 
+        criteriaList.add(Criteria.where("recipientId").is(recipient));
+
+        // Apply category filter only if present
+        category.ifPresent(cat -> criteriaList.add(Criteria.where("category").is(cat)));
+        // Handle read/unread status
         status.ifPresent(s -> {
             if (s.equalsIgnoreCase("READ")) {
                 criteriaList.add(Criteria.where("readAt").ne(null));
@@ -42,16 +52,31 @@ public class NotificationServicesImpl implements NotificationServices {
             }
         });
 
-        Query query = new Query(new Criteria().andOperator(criteriaList.toArray(new Criteria[0])))
-                .with(pageable);
+        criteriaList.add(Criteria.where("dismissed").ne(true));
+
+        Criteria finalCriteria = new Criteria().andOperator(criteriaList.toArray(new Criteria[0]));
+
+        Query query = new Query(finalCriteria);
+
+        // Default sort if none provided
+        if (!pageable.getSort().isSorted()) {
+            query.with(Sort.by(Sort.Direction.DESC, "createdAt"));
+        }
+
+        // Apply pagination and sorting
+        query.with(pageable);
+
+        // Execute query
         List<Notification> notifications = mongoTemplate.find(query, Notification.class);
         long total = mongoTemplate.count(Query.of(query).limit(-1).skip(-1), Notification.class);
+
         return new PageImpl<>(notifications, pageable, total);
     }
 
+
     @Override
     public Optional<SingleNotificationResponseDTO> getNotification(String notificationId, String userId) {
-        Optional<Notification> foundNotification = notificationRepository.findByIdAndRecipientId(notificationId,userId);
+        Optional<Notification> foundNotification = notificationRepository.findByIdAndRecipientId(notificationId, userId);
         return foundNotification.map(notification -> SingleNotificationResponseDTO.builder()
                 .success(true)
                 .message("Notification retrieved")
@@ -62,7 +87,7 @@ public class NotificationServicesImpl implements NotificationServices {
 
     @Override
     public Page<Notification> searchNotification(String searchTerm, String userId, Pageable pageable) {
-        return notificationRepository.findAllByRecipientIdAndTitleOrContent(userId, searchTerm, searchTerm, pageable);
+        return notificationRepository.findAllByRecipientIdAndTitleOrContentContainingIgnoreCase(userId, searchTerm, searchTerm, pageable);
     }
 
     @Override

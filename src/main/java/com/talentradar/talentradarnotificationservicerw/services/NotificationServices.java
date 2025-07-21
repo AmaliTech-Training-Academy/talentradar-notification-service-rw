@@ -22,3 +22,4 @@ public interface NotificationServices {
 
     SimpleResponseDTO dismissNotification(String notificationId);
 }
+
