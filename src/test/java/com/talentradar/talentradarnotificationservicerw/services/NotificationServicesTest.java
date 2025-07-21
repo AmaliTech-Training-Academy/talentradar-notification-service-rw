@@ -103,7 +103,7 @@ public class NotificationServicesTest {
 
         Notification notification = new Notification();
         Page<Notification> expectedPage = new PageImpl<>(List.of(notification));
-        when(notificationRepository.findAllByRecipientIdAndTitleOrContent(userId, searchTerm, searchTerm, pageable))
+        when(notificationRepository.findAllByRecipientIdAndTitleOrContentContainingIgnoreCase(userId, searchTerm, searchTerm, pageable))
                 .thenReturn(expectedPage);
 
         Page<Notification> result = notificationServices.searchNotification(searchTerm, userId, pageable);

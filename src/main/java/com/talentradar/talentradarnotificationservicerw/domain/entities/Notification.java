@@ -13,7 +13,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Document(collation = "items")
+@Document(collection = "notifications")
 @Getter
 @Setter
 @NoArgsConstructor

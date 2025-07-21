@@ -1,0 +1,30 @@
+services:
+  rabbitmq:
+    image: rabbitmq:3.12-management
+    container_name: rabbitmq
+    hostname: rabbitmq
+    ports:
+      - "5672:5672"     # AMQP port
+      - "15672:15672"   # Management UI port
+    environment:
+      # Only keep the basic, non-deprecated variables
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_DEFAULT_VHOST: /
+      # Remove all deprecated environment variables
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 30s
+      retries: 3
+    restart: unless-stopped
+    networks:
+      - talent-radar-network
+volumes:
+  rabbitmq_data:
+  postgres_data:
+networks:
+  talent-radar-network:
+    driver: bridge

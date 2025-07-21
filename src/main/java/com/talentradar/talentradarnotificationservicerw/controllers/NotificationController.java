@@ -17,14 +17,25 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/notifications")
+@RequestMapping("/api/v1/notifications")
 @RequiredArgsConstructor
 public class NotificationController {
     private final NotificationServices notificationService;
 
     @GetMapping
-    public ResponseEntity<PaginatedResponseDTO> getNotifications(@RequestHeader("X-User-Id") String userId, @RequestParam(required = false) NotificationCategory category, @RequestParam(required = false) String status, Pageable pageable) {
-        Page<Notification> notificationsPage = notificationService.findNotifications(userId, Optional.of(category), Optional.of(status), pageable);
+    public ResponseEntity<PaginatedResponseDTO> getNotifications(
+            @RequestHeader("X-User-Id") String userId,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String status,
+            Pageable pageable) {
+        Optional<NotificationCategory> categoryEnum = parseEnum(NotificationCategory.class, category);
+        Optional<String> statusOpt = Optional.ofNullable(status);
+        Page<Notification> notificationsPage = notificationService.findNotifications(
+                userId,
+                categoryEnum,
+                statusOpt,
+                pageable
+        );
         return getPaginatedResponseDTOResponseEntity(notificationsPage);
     }
 
@@ -85,6 +96,15 @@ public class NotificationController {
                 .build();
 
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    public <T extends Enum<T>> Optional<T> parseEnum(Class<T> enumType, String value) {
+        if (value == null) return Optional.empty();
+        try {
+            return Optional.of(Enum.valueOf(enumType, value.toUpperCase()));
+        } catch (IllegalArgumentException ex) {
+            return Optional.empty(); // or log warning
+        }
     }
 
 }
