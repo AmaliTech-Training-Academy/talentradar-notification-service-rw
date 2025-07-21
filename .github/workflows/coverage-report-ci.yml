@@ -33,7 +33,7 @@ jobs:
           java-version: '21'
 
       - name: Run tests and generate coverage
-        run: mvn clean verify
+        run: mvn clean verify -f external-pom.xml
         continue-on-error: true
 
       - name: Upload coverage report
