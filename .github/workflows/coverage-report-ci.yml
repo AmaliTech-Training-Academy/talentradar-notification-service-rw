@@ -1,4 +1,4 @@
-name: Coverage Report CI
+name: Allure & Coverage Report CI
 
 on:
   push:
