@@ -3,6 +3,7 @@ package com.talentradar.talentradarnotificationservicerw.utils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -24,11 +25,16 @@ public class JwtUtil {
     }
 
     private SecretKey getSigningKey() {
-        return Keys.hmacShaKeyFor(secret.getBytes());
+        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
     }
 
     public String getEmailFromToken(String token) {
         return getClaimFromToken(token, Claims::getSubject);
+    }
+
+    public String getRoleFromToken(String token) {
+        final Claims claims = getAllClaimsFromToken(token);
+        return claims.get("role", String.class);
     }
 
     public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {

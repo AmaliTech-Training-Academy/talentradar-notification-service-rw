@@ -18,6 +18,8 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -47,6 +49,7 @@ public class NotificationEventListener {
                     .title(title)
                     .type(NotificationType.IN_APP)
                     .eventType(NotificationEventType.ASSESSMENT)
+                    .sentAt(LocalDateTime.now())
                     .build();
 
             Notification savedNotification = notificationServices.saveNotification(notification);
@@ -81,6 +84,7 @@ public class NotificationEventListener {
                     .title(title)
                     .type(NotificationType.IN_APP)
                     .eventType(NotificationEventType.FEEDBACK)
+                    .sentAt(LocalDateTime.now())
                     .build();
 
             Notification savedNotification = notificationServices.saveNotification(notification);
