@@ -1,6 +1,5 @@
 package com.talentradar.talentradarnotificationservicerw.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rabbitmq.client.Channel;
 import com.talentradar.talentradarnotificationservicerw.domain.entities.Notification;
 import com.talentradar.talentradarnotificationservicerw.domain.enums.NotificationCategory;
