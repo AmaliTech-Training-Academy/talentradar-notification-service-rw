@@ -55,9 +55,8 @@ public class JwtUtil {
             throw new IllegalArgumentException("Invalid JWT token", e);
         }
     }
-
+  
     public UserClaimsDTO extractClaimsFromHeader(HttpServletRequest request) {
-
         return UserClaimsDTO.builder()
                 .userId(request.getHeader("X-User-Id"))
                 .email(request.getHeader("X-User-Email"))

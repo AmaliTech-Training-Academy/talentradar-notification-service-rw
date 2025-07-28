@@ -22,13 +22,12 @@ import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class CookieAuthHandshakeInterceptor implements HandshakeInterceptor {
     private final JwtUtil jwtUtil;
 
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
-        if (request instanceof HttpServletRequest servletRequest) {
+if (request instanceof HttpServletRequest servletRequest) {
 
             UserClaimsDTO userClaims = jwtUtil.extractClaimsFromHeader(servletRequest);
 
