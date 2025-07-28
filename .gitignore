@@ -17,7 +17,6 @@ ehthumbs.db
 Thumbs.db
 
 # IDE files
-.vscode/
 .idea/
 *.swp
 *.swo
@@ -59,6 +58,8 @@ external-pom.xml
 !**/src/test/**/build/
 
 ### VS Code ###
-.vscode/
 
 .env
+temp_auto_push.bat
+temp_interactive_push.bat
+.gitignore
