@@ -1,0 +1,15 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+test,com.talentradar.talentradarnotificationservicerw.utils,JwtUtil,19,57,0,0,6,17,1,6,1,6
+test,com.talentradar.talentradarnotificationservicerw.domain.events,FeedBackServiceEvent,21,0,0,0,1,0,1,0,1,0
+test,com.talentradar.talentradarnotificationservicerw.domain.events,EventLog,9,0,0,0,1,0,1,0,1,0
+test,com.talentradar.talentradarnotificationservicerw.domain.events,FeedbackEventType,0,27,0,0,0,2,0,1,0,1
+test,com.talentradar.talentradarnotificationservicerw.controllers,ErrorController,47,0,0,0,16,0,4,0,4,0
+test,com.talentradar.talentradarnotificationservicerw.controllers,NotificationController,17,120,0,4,3,34,1,8,1,6
+test,com.talentradar.talentradarnotificationservicerw.domain.mappers,EntityToDTO,3,24,0,0,1,9,1,1,1,1
+test,com.talentradar.talentradarnotificationservicerw.domain.enums,AssessmentEventType,0,15,0,0,0,2,0,1,0,1
+test,com.talentradar.talentradarnotificationservicerw.domain.enums,NotificationEventType,0,15,0,0,0,2,0,1,0,1
+test,com.talentradar.talentradarnotificationservicerw.domain.enums,NotificationCategory,0,27,0,0,0,2,0,1,0,1
+test,com.talentradar.talentradarnotificationservicerw.domain.enums,NotificationStatus,15,0,0,0,2,0,1,0,1,0
+test,com.talentradar.talentradarnotificationservicerw.domain.enums,NotificationType,0,15,0,0,0,2,0,1,0,1
+test,com.talentradar.talentradarnotificationservicerw.services.impl,EmailServiceDevImpl,19,0,0,0,6,0,2,0,2,0
+test,com.talentradar.talentradarnotificationservicerw.services.impl,NotificationServicesImpl,0,223,2,8,0,50,2,12,0,9
