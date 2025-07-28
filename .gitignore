@@ -51,6 +51,9 @@ target/
 /nbproject/private/
 /nbbuild/
 /nbdist/
+allure-results/
+.allure/
+external-pom.xml
 /.nb-gradle/
 !**/src/main/**/build/
 !**/src/test/**/build/
