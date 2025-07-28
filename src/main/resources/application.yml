@@ -6,3 +6,11 @@ spring:
   cloud:
     config:
       uri: ${SPRING_CLOUD_CONFIG_URI}
+
+
+logging:
+  level:
+    org:
+      springframework:
+        security: TRACE
+        web: TRACE

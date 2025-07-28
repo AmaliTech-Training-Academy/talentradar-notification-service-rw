@@ -20,7 +20,6 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class AuthFilter extends OncePerRequestFilter {
     private static final String HEADER_USER_ID = "X-User-Id";
     private static final String HEADER_USER_EMAIL = "X-User-Email";
@@ -31,6 +30,18 @@ public class AuthFilter extends OncePerRequestFilter {
     protected void doFilterInternal(@NonNull HttpServletRequest request,
                                     @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
+
+        String path = request.getRequestURI();
+        if (path.equals("/ws-notifications/info") ||
+                path.matches("/ws-notifications/\\d+/.*")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        if (!path.startsWith("/ws-notifications")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         // Extract user information from headers
         String userId = request.getHeader(HEADER_USER_ID);

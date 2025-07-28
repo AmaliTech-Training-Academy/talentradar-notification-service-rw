@@ -1,6 +1,5 @@
 package com.talentradar.talentradarnotificationservicerw.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rabbitmq.client.Channel;
 import com.talentradar.talentradarnotificationservicerw.domain.entities.Notification;
 import com.talentradar.talentradarnotificationservicerw.domain.enums.NotificationCategory;
@@ -17,6 +16,8 @@ import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDateTime;
 
 @Component
 @RequiredArgsConstructor
@@ -47,6 +48,7 @@ public class NotificationEventListener {
                     .title(title)
                     .type(NotificationType.IN_APP)
                     .eventType(NotificationEventType.ASSESSMENT)
+                    .sentAt(LocalDateTime.now())
                     .build();
 
             Notification savedNotification = notificationServices.saveNotification(notification);
@@ -81,6 +83,7 @@ public class NotificationEventListener {
                     .title(title)
                     .type(NotificationType.IN_APP)
                     .eventType(NotificationEventType.FEEDBACK)
+                    .sentAt(LocalDateTime.now())
                     .build();
 
             Notification savedNotification = notificationServices.saveNotification(notification);
