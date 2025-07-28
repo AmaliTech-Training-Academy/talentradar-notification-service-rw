@@ -1,10 +1,12 @@
 package com.talentradar.talentradarnotificationservicerw.utils;
 
+import com.talentradar.talentradarnotificationservicerw.domain.dtos.UserClaimsDTO;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -52,5 +54,14 @@ public class JwtUtil {
         } catch (JwtException | IllegalArgumentException e) {
             throw new IllegalArgumentException("Invalid JWT token", e);
         }
+    }
+  
+    public UserClaimsDTO extractClaimsFromHeader(HttpServletRequest request) {
+        return UserClaimsDTO.builder()
+                .userId(request.getHeader("X-User-Id"))
+                .email(request.getHeader("X-User-Email"))
+                .fullName(request.getHeader("X-User-FullName"))
+                .role(request.getHeader("X-User-Role"))
+                .build();
     }
 }

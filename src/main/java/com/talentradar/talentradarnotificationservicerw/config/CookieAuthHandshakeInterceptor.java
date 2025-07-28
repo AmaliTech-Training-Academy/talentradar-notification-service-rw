@@ -1,5 +1,6 @@
 package com.talentradar.talentradarnotificationservicerw.config;
 
+import com.talentradar.talentradarnotificationservicerw.domain.dtos.UserClaimsDTO;
 import com.talentradar.talentradarnotificationservicerw.utils.JwtUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,31 +27,26 @@ public class CookieAuthHandshakeInterceptor implements HandshakeInterceptor {
 
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
-        if (request instanceof ServletServerHttpRequest servletRequest) {
+if (request instanceof HttpServletRequest servletRequest) {
 
-            HttpServletRequest httpRequest = servletRequest.getServletRequest();
-            Cookie[] cookies = httpRequest.getCookies();
+            UserClaimsDTO userClaims = jwtUtil.extractClaimsFromHeader(servletRequest);
 
-            if (cookies != null) {
-                for (Cookie cookie : cookies) {
-                    if ("token".equals(cookie.getName())) {
+            UserPrincipal userPrincipal = new UserPrincipal(
+                    userClaims.userId(),
+                    userClaims.email(),
+                    userClaims.fullName(),
+                    userClaims.role()
+            );
 
-                        String token = cookie.getValue();
-                        String username = jwtUtil.getEmailFromToken(token);
-                        String role = jwtUtil.getRoleFromToken(token);
+            List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(userClaims.role()));
+            UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(userPrincipal, null, authorities);
 
-                        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(role));
-                        UsernamePasswordAuthenticationToken authentication =
-                                new UsernamePasswordAuthenticationToken(username, null, authorities);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
 
-                        SecurityContextHolder.getContext().setAuthentication(authentication);
+            servletRequest.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
 
-                        httpRequest.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
-
-                        attributes.put("user", authentication);
-                    }
-                }
-            }
+            attributes.put("user", authentication);
         }
         return true;
     }
